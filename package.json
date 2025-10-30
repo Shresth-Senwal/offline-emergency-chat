@@ -9,22 +9,22 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-native-community/netinfo": "11.4.1",
-    "expo": "~54.0.20",
-    "expo-barcode-scanner": "^13.0.1",
-    "expo-bluetooth": "^0.0.0",
-    "expo-camera": "~17.0.8",
-    "expo-crypto": "~15.0.7",
-    "expo-status-bar": "~3.0.8",
-    "react": "19.1.0",
-    "react-native": "0.81.5",
-    "react-native-ble-plx": "^3.5.0",
-    "react-native-qrcode-svg": "^6.3.16"
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-community/netinfo": "11.3.1",
+    "expo": "~51.0.28",
+    "expo-barcode-scanner": "~13.0.1",
+    "expo-camera": "~15.0.14",
+    "expo-crypto": "~13.0.2",
+    "expo-status-bar": "~1.12.1",
+    "react": "18.2.0",
+    "react-native": "0.74.5",
+    "react-native-ble-plx": "^3.1.2",
+    "react-native-qrcode-svg": "^6.2.0",
+    "react-native-svg": "15.2.0"
   },
   "devDependencies": {
-    "@types/react": "~19.1.0",
-    "typescript": "~5.9.2"
+    "@types/react": "~18.2.79",
+    "typescript": "~5.3.3"
   },
   "private": true
 }

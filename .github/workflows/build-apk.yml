@@ -35,20 +35,27 @@ jobs:
         run: npm install -g @expo/cli
 
       - name: 📦 Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          # Install missing peer dependencies
+          npm install react-native-svg
 
       - name: 🔧 Prebuild Android
-        run: npx expo prebuild --platform android --clear
+        run: |
+          npx expo install --fix
+          npx expo prebuild --platform android --clear --no-install
 
       - name: 🏗 Setup Gradle
         run: |
           cd android
           chmod +x ./gradlew
+          # Accept Android SDK licenses
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: 🚀 Build APK
         run: |
           cd android
-          ./gradlew assembleRelease
+          ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: 📱 Upload APK artifact
         uses: actions/upload-artifact@v4
