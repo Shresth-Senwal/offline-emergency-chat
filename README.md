@@ -1,97 +1,368 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Offline Emergency Mesh Chat
 
-# Getting Started
+A decentralized, peer-to-peer emergency communication application that enables text messaging over Bluetooth Low Energy (BLE) without requiring internet or cellular infrastructure. The app uses multi-hop mesh networking to extend communication range beyond direct BLE connectivity.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Overview
 
-## Step 1: Start Metro
+This React Native application provides critical communication capabilities during emergencies when traditional networks are unavailable. Key features include:
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- **Offline Operation**: Works completely without internet or cellular connectivity
+- **Mesh Networking**: Messages relay through intermediate devices to extend range
+- **End-to-End Encryption**: All messages encrypted with XChaCha20-Poly1305
+- **Trust Verification**: QR code-based fingerprint verification to prevent man-in-the-middle attacks
+- **Cross-Platform**: Compatible between iOS and Android devices
+- **Zero Configuration**: Automatic peer discovery and connection
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## Prerequisites
 
-```sh
-# Using npm
-npm start
+Before you begin, ensure you have the following installed:
 
-# OR using Yarn
-yarn start
+### Required Software
+
+- **Node.js**: Version 20 or higher (LTS recommended)
+  - Download from [nodejs.org](https://nodejs.org/)
+  - Verify installation: `node --version`
+
+- **React Native CLI**: Install globally
+  ```bash
+  npm install -g react-native-cli
+  ```
+
+- **Watchman** (macOS/Linux): File watching service
+  ```bash
+  # macOS
+  brew install watchman
+  
+  # Linux
+  Follow instructions at https://facebook.github.io/watchman/docs/install
+  ```
+
+### iOS Development (macOS only)
+
+- **Xcode**: Version 14.0 or higher
+  - Download from Mac App Store
+  - Install Command Line Tools: `xcode-select --install`
+
+- **CocoaPods**: iOS dependency manager
+  ```bash
+  sudo gem install cocoapods
+  ```
+
+- **iOS Simulator** or physical iOS device (iOS 13.0+)
+
+### Android Development
+
+- **Android Studio**: Latest stable version
+  - Download from [developer.android.com](https://developer.android.com/studio)
+  - Install Android SDK (API Level 23 or higher)
+  - Configure ANDROID_HOME environment variable
+
+- **Java Development Kit (JDK)**: Version 11 or higher
+  - Verify installation: `java -version`
+
+- **Android Emulator** or physical Android device (Android 6.0+)
+  - Enable Developer Options and USB Debugging on physical devices
+
+### Hardware Requirements
+
+- **Bluetooth 4.0+**: Required for BLE communication
+- **Physical Devices Recommended**: BLE functionality is limited in emulators/simulators
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd OfflineEmergencyChat
 ```
 
-## Step 2: Build and run your app
+### 2. Install Dependencies
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+npm install
 ```
+
+This will install all required Node.js packages including:
+- react-native-ble-plx (BLE communication)
+- react-native-libsodium (cryptography)
+- @react-native-async-storage/async-storage (persistent storage)
+- react-native-qrcode-svg (QR code generation)
+- react-native-camera (QR code scanning)
+
+### 3. iOS Setup
+
+```bash
+cd ios
+pod install
+cd ..
+```
+
+This installs native iOS dependencies via CocoaPods.
+
+**Important**: The app requires Bluetooth permissions. These are already configured in `ios/OfflineEmergencyChat/Info.plist`:
+- `NSBluetoothAlwaysUsageDescription`
+- `NSBluetoothPeripheralUsageDescription`
+
+### 4. Android Setup
+
+No additional setup required. Bluetooth permissions are configured in `android/app/src/main/AndroidManifest.xml`:
+- `BLUETOOTH`
+- `BLUETOOTH_ADMIN`
+- `BLUETOOTH_SCAN`
+- `BLUETOOTH_CONNECT`
+- `BLUETOOTH_ADVERTISE`
+- `ACCESS_FINE_LOCATION` (required for BLE scanning on Android)
+
+## Build and Run
 
 ### iOS
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+#### Using iOS Simulator
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+```bash
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+Or specify a device:
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```bash
+npm run ios -- --simulator="iPhone 14 Pro"
+```
 
-## Step 3: Modify your app
+#### Using Physical iOS Device
 
-Now that you have successfully run the app, let's make changes!
+1. Open `ios/OfflineEmergencyChat.xcworkspace` in Xcode
+2. Select your device from the device dropdown
+3. Configure signing in "Signing & Capabilities" tab
+4. Click Run button or press Cmd+R
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+**Note**: BLE functionality requires a physical device. Simulators have limited BLE support.
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+### Android
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+#### Using Android Emulator
 
-## Congratulations! :tada:
+```bash
+npm run android
+```
 
-You've successfully run and modified your React Native App. :partying_face:
+Make sure an emulator is running or start one from Android Studio.
 
-### Now what?
+#### Using Physical Android Device
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+1. Enable Developer Options on your device
+2. Enable USB Debugging
+3. Connect device via USB
+4. Verify device is detected: `adb devices`
+5. Run:
 
-# Troubleshooting
+```bash
+npm run android
+```
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+**Note**: BLE functionality requires a physical device. Emulators have limited BLE support.
 
-# Learn More
+## Development
 
-To learn more about React Native, take a look at the following resources:
+### Start Metro Bundler
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+The Metro bundler compiles JavaScript code. Start it separately:
+
+```bash
+npm start
+```
+
+Then run iOS or Android build commands in a separate terminal.
+
+### Running Tests
+
+```bash
+npm test
+```
+
+This runs the Jest test suite including unit tests for:
+- CryptoService (encryption/decryption)
+- MessageService (envelope handling, relay logic)
+- Message envelope utilities (serialization/deserialization)
+
+### Linting
+
+```bash
+npm run lint
+```
+
+Runs ESLint to check code quality and style.
+
+## Project Structure
+
+```
+OfflineEmergencyChat/
+├── src/
+│   ├── components/          # React components
+│   │   ├── ConversationView.tsx
+│   │   ├── PeerList.tsx
+│   │   ├── TrustVerification.tsx
+│   │   └── MessageItem.tsx
+│   ├── services/            # Core business logic
+│   │   ├── BLEService.ts
+│   │   ├── CryptoService.ts
+│   │   ├── MessageService.ts
+│   │   └── StorageService.ts
+│   ├── context/             # State management
+│   │   ├── AppContext.tsx
+│   │   └── types.ts
+│   └── utils/               # Utility functions
+│       ├── constants.ts
+│       ├── messageEnvelope.ts
+│       └── duplicateDetection.ts
+├── __tests__/               # Test files
+├── ios/                     # iOS native code
+├── android/                 # Android native code
+└── App.tsx                  # Root component
+```
+
+## Troubleshooting
+
+### Bluetooth Issues
+
+**Problem**: "Bluetooth is disabled" banner appears
+
+**Solution**:
+- iOS: Settings → Bluetooth → Enable
+- Android: Settings → Connections → Bluetooth → Enable
+- Restart the app after enabling Bluetooth
+
+**Problem**: Peers not discovered
+
+**Solution**:
+- Ensure both devices have Bluetooth enabled
+- Check that devices are within BLE range (~10-30 meters)
+- Verify app has Bluetooth permissions (check device Settings → App Permissions)
+- Try force-closing and restarting the app
+- On Android, ensure Location Services are enabled (required for BLE scanning)
+
+### Permission Issues
+
+**Problem**: "Bluetooth permission denied" on iOS
+
+**Solution**:
+- Go to Settings → Privacy → Bluetooth
+- Find "OfflineEmergencyChat" and enable
+- Restart the app
+
+**Problem**: "Location permission denied" on Android
+
+**Solution**:
+- Go to Settings → Apps → OfflineEmergencyChat → Permissions
+- Enable Location permission (required for BLE scanning on Android 6.0+)
+- Restart the app
+
+### Build Issues
+
+**Problem**: iOS build fails with "Command PhaseScriptExecution failed"
+
+**Solution**:
+```bash
+cd ios
+pod deintegrate
+pod install
+cd ..
+npm run ios
+```
+
+**Problem**: Android build fails with "SDK location not found"
+
+**Solution**:
+- Create `android/local.properties` file
+- Add: `sdk.dir=/path/to/Android/sdk`
+- Or set ANDROID_HOME environment variable
+
+**Problem**: Metro bundler connection issues
+
+**Solution**:
+```bash
+# Clear Metro cache
+npm start -- --reset-cache
+
+# Or clear all caches
+watchman watch-del-all
+rm -rf node_modules
+npm install
+```
+
+### Connection Issues
+
+**Problem**: Devices connect but messages don't send
+
+**Solution**:
+- Verify both devices completed key exchange (check logs)
+- Ensure message length is under 500 characters
+- Check that devices haven't moved out of range
+- Try disconnecting and reconnecting
+
+**Problem**: Messages not relaying through intermediate devices
+
+**Solution**:
+- Verify all devices are running the app in foreground
+- Check that intermediate device is connected to both sender and recipient
+- Ensure TTL hasn't reached 0 (max 10 hops)
+- Review logs for relay errors
+
+### Performance Issues
+
+**Problem**: App drains battery quickly
+
+**Solution**:
+- This is expected behavior due to continuous BLE scanning
+- Close app when not needed
+- Future versions may implement background optimization
+
+**Problem**: App becomes unresponsive
+
+**Solution**:
+- Check device memory (app stores message history)
+- Clear message history by reinstalling app
+- Ensure device has sufficient free storage
+
+## Known Limitations
+
+- **Foreground Only**: App must be in foreground to maintain BLE connections (iOS/Android background BLE limitations)
+- **Connection Limit**: iOS limits to 7 concurrent BLE connections
+- **Range**: Direct BLE range is ~10-30 meters depending on environment
+- **Hop Limit**: Messages relay maximum 10 hops (TTL=10)
+- **Message Size**: Maximum 500 characters per message
+- **No Message History Sync**: Each device maintains its own local message history
+- **No Group Chat**: MVP supports only peer-to-peer messaging
+- **No File Sharing**: Text messages only in MVP
+
+## Security Considerations
+
+- **Encryption**: All messages encrypted with XChaCha20-Poly1305 (equivalent to AES-256-GCM)
+- **Key Exchange**: X25519 Diffie-Hellman provides forward secrecy
+- **Trust Verification**: Manual QR code verification prevents man-in-the-middle attacks
+- **Key Storage**: Private keys stored in device secure storage (iOS Keychain, Android Keystore)
+- **No Cloud**: All data stored locally, no cloud synchronization
+
+## Contributing
+
+This is an MVP implementation. Future enhancements may include:
+- Background operation support
+- Group messaging
+- File/image sharing
+- Voice messages
+- Message acknowledgments
+- Improved UI/UX
+
+## License
+
+[Specify license here]
+
+## Support
+
+For issues, questions, or contributions, please [specify contact method or issue tracker].
+
+## Acknowledgments
+
+- Mesh relay logic adapted from [expo-bitchat](https://github.com/permissionlesstech/bitchat)
+- Built with React Native and libsodium cryptographic library
