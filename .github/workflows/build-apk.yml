@@ -1,0 +1,83 @@
+name: Build Expo APK
+
+on:
+  push:
+    branches: [ expo-version ]
+  pull_request:
+    branches: [ expo-version ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: npm
+
+      - name: 🏗 Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🏗 Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: 🏗 Setup Expo CLI
+        run: npm install -g @expo/cli
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Prebuild Android
+        run: npx expo prebuild --platform android --clear
+
+      - name: 🏗 Setup Gradle
+        run: |
+          cd android
+          chmod +x ./gradlew
+
+      - name: 🚀 Build APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: 📱 Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-emergency-chat-expo.apk
+          path: android/app/build/outputs/apk/release/*.apk
+          retention-days: 30
+
+      - name: 📋 Create Release
+        if: github.ref == 'refs/heads/expo-version'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: expo-v${{ github.run_number }}
+          name: Expo Build v${{ github.run_number }}
+          body: |
+            🚀 Automated Expo APK build
+            
+            **Changes in this build:**
+            - Fixed TypeScript bugs in AppContext and ExpoCryptoService
+            - Added missing utility methods to ExpoCryptoService
+            - Fixed type compatibility between CryptoService and ExpoCryptoService
+            - Updated MessageService to accept both crypto service types
+            - Added BufferSource type assertions for Web Crypto API
+            
+            **Download:** offline-emergency-chat-expo.apk
+            
+            Built from commit: ${{ github.sha }}
+          files: android/app/build/outputs/apk/release/*.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
