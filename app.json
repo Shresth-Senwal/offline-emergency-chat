@@ -1,30 +1,55 @@
 {
   "expo": {
-    "name": "OfflineEmergencyChatExpo",
-    "slug": "OfflineEmergencyChatExpo",
+    "name": "Offline Emergency Chat",
+    "slug": "offline-emergency-chat",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "This app uses Bluetooth to communicate with nearby devices for emergency messaging when internet is not available.",
+        "NSBluetoothPeripheralUsageDescription": "This app uses Bluetooth to communicate with nearby devices for emergency messaging when internet is not available.",
+        "NSCameraUsageDescription": "This app uses the camera to scan QR codes for verifying peer identity and establishing trust."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_SCAN",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.BLUETOOTH_ADVERTISE",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA"
+      ],
+      "package": "com.offlineemergencychat"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-barcode-scanner",
+      "expo-camera",
+      [
+        "react-native-ble-plx",
+        {
+          "isBackgroundEnabled": false,
+          "modes": ["central", "peripheral"],
+          "bluetoothAlwaysPermission": "This app uses Bluetooth to communicate with nearby devices for emergency messaging when internet is not available."
+        }
+      ]
+    ]
   }
 }
