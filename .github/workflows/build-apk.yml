@@ -24,7 +24,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: OfflineEmergencyChat/package-lock.json
       
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -36,26 +35,24 @@ jobs:
         uses: android-actions/setup-android@v3
       
       - name: Install dependencies
-        working-directory: OfflineEmergencyChat
         run: npm ci
       
       - name: Make gradlew executable
-        working-directory: OfflineEmergencyChat/android
+        working-directory: android
         run: chmod +x gradlew
       
       - name: Build Release APK
-        working-directory: OfflineEmergencyChat/android
+        working-directory: android
         run: ./gradlew assembleRelease
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: OfflineEmergencyChat/android/app/build/outputs/apk/release/app-release.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
           retention-days: 30
       
       - name: Create Release Info
-        working-directory: OfflineEmergencyChat
         run: |
           echo "Build Date: $(date)" > build-info.txt
           echo "Commit: ${{ github.sha }}" >> build-info.txt
@@ -65,5 +62,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-info
-          path: OfflineEmergencyChat/build-info.txt
+          path: build-info.txt
           retention-days: 30
